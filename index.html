@@ -1,0 +1,52 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Upload Example</title>
+</head>
+<body>
+  <h1>File Upload Example</h1>
+  
+  <!-- File Upload Form -->
+  <form action="/upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" />
+    <button type="submit">Upload File</button>
+  </form>
+
+  <hr>
+
+  <!-- Display Uploaded Files -->
+  <h2>Uploaded Files</h2>
+  <ul id="fileList"></ul>
+
+  <!-- Fetch and display the list of uploaded files using JavaScript -->
+  <script>
+    fetch('/files')
+      .then(response => response.json())
+      .then(files => {
+        const fileList = document.getElementById('fileList');
+        files.forEach(file => {
+          const listItem = document.createElement('li');
+
+          // Check if the file has an image extension (you can customize this check)
+          const isImage = /\.(jpg|jpeg|png|gif)$/i.test(file.filename);
+
+          if (isImage) {
+            const img = document.createElement('img');
+            img.src = `/uploads/${file.filename}`;
+            img.alt = file.filename;
+            img.style.maxWidth = '300px'; // Adjust the maximum width as needed
+            listItem.appendChild(img);
+          } else {
+            listItem.textContent = `${file.filename} - ${file.path}`;
+          }
+
+          fileList.appendChild(listItem);
+        });
+      })
+      .catch(error => console.error('Error fetching files:', error));
+  </script>
+</body>
+</html>
